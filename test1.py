@@ -118,8 +118,23 @@ with open("1zh.txt") as file:
             response = requests.request("GET", url, headers=headers, data=payload)
 
             #print(response.json())
-            logger.info("状态: %s", response.json())
+            logger.info("签到状态: %s", response.json())
+            msg = msg + "\n" + str(a) + "   " + date.strip('\n') + "   " + str(response.json()) + '\n'
     except Exception as e:
         logger.error("发生错误: %s", str(e))
 
 
+def send_wechat(msg):
+    token = '6e2a636fa73f4437ab92f48417111e46'#前边复制到那个token
+    title = 'Github Action签到通知'
+    content = msg
+    template = 'html'
+    url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
+    # print(url)
+    logger.info("url: %s", url)
+    r = requests.get(url=url)
+    #print(r.text)
+    logger.info("推送状态: %s", r.text)
+
+if __name__ == '__main__':
+    send_wechat(msg)
