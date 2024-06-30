@@ -1,44 +1,51 @@
+import logging
 import requests
 import js2py
-#import notify
+
+# import notify
 date = 123
-msg=""
+msg = ""
 a = 0
-hz=".rcits.cn"
+hz = ".rcits.cn"
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 with open("1zh.txt") as file:
     while date != "\n":
-        date = file.readline() #账号
-        #date1 = file.readline()  #密码
+        date = file.readline()  # 账号
+        # date1 = file.readline()  #密码
         date1 = date.strip('\n') + "123456"
         if date == '\n':
             break
-        
+
         # 登录
-        url = "https://" + date.strip('\n') + hz+"/user/ajax.php?act=login"
+        url = "https://" + date.strip('\n') + hz + "/user/ajax.php?act=login"
 
         payload = "user=" + date.strip('\n') + "&pass=" + date1.strip('\n')
         headers = {
-        'Origin': "https://" + date.strip('\n') + hz,
-        'Referer': "https://" + date.strip('\n') + hz+"/user/login.php",
-        'Content-Type': 'application/x-www-form-urlencoded'
+            'Origin': "https://" + date.strip('\n') + hz,
+            'Referer': "https://" + date.strip('\n') + hz + "/user/login.php",
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
 
         response = requests.request("POST", url, headers=headers, data=payload)
-        print(date.strip('\n'))
+        a += 1
+        print("第{}个   ".format(a)+date.strip('\n'))
         print(response.text)
-        
+
+        logger.info("账号: %s", "第{}个   ".format(a)+date.strip('\n'))
+        logger.info("响应内容: %s", response.text)
+
         login_fail = response.text.find("用户名或密码不正确！")
         if login_fail != -1:
             continue
-        
-        
+
         # 获取基本cookie
         cookie = response.cookies
         PHPSESSID = cookie.values()[0]
         user_token = cookie.values()[1]
         mysid = cookie.values()[2]
 
-        url = "https://" + date.strip('\n') +hz+ "/user/qiandao.php"
+        url = "https://" + date.strip('\n') + hz + "/user/qiandao.php"
 
         payload = {}
         headers = {
@@ -48,7 +55,7 @@ with open("1zh.txt") as file:
             'cache-control': 'no-cache',
             # 'cookie': "mysid=" + mysid + "; user_token=" + user_token + "; PHPSESSID=" + PHPSESSID + "; sec_defend=" + sec_defend + "; counter=1; _aihecong_chat_visibility=true",
             'pragma': 'no-cache',
-            'referer': "https://" + date.strip('\n') + hz+"/user/",
+            'referer': "https://" + date.strip('\n') + hz + "/user/",
             'sec-ch-ua': '"Microsoft Edge";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"Windows"',
@@ -73,19 +80,18 @@ with open("1zh.txt") as file:
             sec_defend = js2py.eval_js(cookiess)
         # print(sec_defend)
 
-
         # sec_defend有效化
-        url = "https://" + date.strip('\n') + hz+"/user/qiandao.php"
+        url = "https://" + date.strip('\n') + hz + "/user/qiandao.php"
 
         payload = {}
         headers = {
-            'authority': date.strip('\n')+hz,
+            'authority': date.strip('\n') + hz,
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
             'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
             'cache-control': 'no-cache',
             'cookie': "mysid=" + mysid + "; user_token=" + user_token + "; PHPSESSID=" + PHPSESSID + "; sec_defend=" + sec_defend + "; counter=1; _aihecong_chat_visibility=true",
             'pragma': 'no-cache',
-            'referer': "https://" + date.strip('\n') + hz+"/user/",
+            'referer': "https://" + date.strip('\n') + hz + "/user/",
             'sec-ch-ua': '"Microsoft Edge";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"Windows"',
@@ -101,19 +107,17 @@ with open("1zh.txt") as file:
         # print(response.text)
 
         # 签到
-        url = "https://" + date.strip('\n') + hz+"/user/ajax_user.php?act=qiandao"
+        url = "https://" + date.strip('\n') + hz + "/user/ajax_user.php?act=qiandao"
         payload = {}
         headers = {
             'Cookie': "mysid=" + mysid + "; user_token=" + user_token + "; PHPSESSID=" + PHPSESSID + "; sec_defend=" + sec_defend + "; counter=1; _aihecong_chat_visibility=true",
-            'Referer': "https://" + date.strip('\n') + hz+"/user/qiandao.php"
-                }
+            'Referer': "https://" + date.strip('\n') + hz + "/user/qiandao.php"
+        }
 
         response = requests.request("GET", url, headers=headers, data=payload)
 
         print(response.json())
-        a +=1
-       
-        msg = msg +"\n"+str(a)+"   "+date.strip('\n')+"   "+str(response.json())+'\n'
-     
+        logger.info("状态: %s", response.json())
 
-#notify.pushplus_bot("签到通知",msg)
+
+
