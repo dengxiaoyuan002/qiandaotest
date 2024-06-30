@@ -30,8 +30,8 @@ with open("1zh.txt") as file:
 
             response = requests.request("POST", url, headers=headers, data=payload)
             a += 1
-            print("第{}个   ".format(a)+date.strip('\n'))
-            print(response.text)
+            #print("第{}个   ".format(a)+date.strip('\n'))
+            #print(response.text)
 
             logger.info("账号: %s", "第{}个   ".format(a)+date.strip('\n'))
             logger.info("响应内容: %s", response.text)
@@ -117,7 +117,7 @@ with open("1zh.txt") as file:
 
             response = requests.request("GET", url, headers=headers, data=payload)
 
-            print(response.json())
+            #print(response.json())
             logger.info("状态: %s", response.json())
     except Exception as e:
         logger.error("发生错误: %s", str(e))
