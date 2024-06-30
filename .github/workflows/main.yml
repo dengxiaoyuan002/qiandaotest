@@ -1,0 +1,27 @@
+name: Run test1.py daily
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # 每天早上7点运行
+  workflow_dispatch:  # 手动触发工作流
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'  # 使用Python 3.x版本
+
+    - name: Install dependencies
+      run: |
+        pip install requests
+        pip install js2py
+
+    - name: Run test1.py
+      run: python test1.py
