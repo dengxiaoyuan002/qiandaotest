@@ -26,3 +26,12 @@ jobs:
         
     - name: Run test1.py
       run: python test1.py
+
+      - name: Commit and push changes
+      if: success()  # 仅在test1.py成功运行后执行
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add 1zh.txt  # 假设您的文件名为1zh.txt
+        # 如果文件未更改则不进行提交，避免无用的commit
+        git diff --quiet && git reset --hard || (git commit -m "Remove failed login accounts" && git push)
