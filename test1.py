@@ -140,6 +140,15 @@ logger.info("处理完成，失败的账号已被删除。")
 
 msg = msg+"\n"+"共删除了 {} 个账号密码对".format(deleted_count)
 # print(msg)
+
+
+# 在脚本最后添加
+if deleted_count > 0:
+    print('::set-output name=changes::true')
+else:
+    print('::set-output name=changes::false')
+
+#推送部分
 def post_weichat_2():
     url = 'http://www.pushplus.plus/send'
     # post发送的字典参数
