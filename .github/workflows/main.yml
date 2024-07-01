@@ -2,12 +2,14 @@ name: Run test1.py daily
 
 on:
   schedule:
-    - cron: '0 7 * * *'  # UTC时间每天早上7点
-  workflow_dispatch:  # 允许手动触发
+    - cron: '0 7 * * *'
+  workflow_dispatch:
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout repository
@@ -16,7 +18,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.11'  # 指定Python版本
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
@@ -24,13 +26,13 @@ jobs:
         pip install js2py
 
     - name: Run test1.py
-      id: run-test1
       run: python test1.py
 
     - name: Commit and push changes
-      if: success() && steps.run-test1.outputs.changes == 'true'
+      if: success()
       run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git commit -am "Remove failed login accounts" || true
-          git push
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add 1zh.txt
+        git commit -m "Remove failed login accounts" || true
+        git push
