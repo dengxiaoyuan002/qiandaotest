@@ -5,7 +5,7 @@ date = 123
 msg = ""
 a = 0
 hz = ".rcits.cn"
-txt = "注册专用.txt"
+txt = "第二批.txt"
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 max_retries = 5  # 每个账号的最大重试次数
@@ -125,7 +125,7 @@ def post_weichat_2():
     # post发送的字典参数
     data_dict = {
         'token': "6e2a636fa73f4437ab92f48417111e46",  # 一对多、一对一的token值
-        'title': 'Github Actionz-001-签到',  # 微信接收到显示的标题
+        'title': 'Github Actionz-002-签到',  # 微信接收到显示的标题
         'template': 'txt',  # 指定微信接收到显示的类型
         'content': msg
     }
