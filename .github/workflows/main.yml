@@ -2,7 +2,7 @@ name: Run test1.py daily
 
 on:
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '0 4 * * *'
   workflow_dispatch:
 
 jobs:
@@ -33,6 +33,6 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add 注册专用.txt
+        git add 第二批.txt
         git commit -m "Remove failed login accounts" || true
         git push
