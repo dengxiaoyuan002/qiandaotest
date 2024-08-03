@@ -1,6 +1,7 @@
 import requests
 import js2py
 import logging
+import os
 date = 123
 msg = ""
 a = 0
@@ -99,7 +100,7 @@ for i in range(0, len(lines), 2):  # 每两行处理一次，账号和密码
 
             response = requests.get(url, headers=headers, data=payload)
             logger.info("签到状态: %s", response.json())
-            msg = msg + "\n" + str(a) + "   " + date
+            msg = msg + "\n\n" + str(a) + "   " + date
 
             break  # 成功执行，退出重试循环
 
@@ -117,22 +118,31 @@ with open(txt, 'w') as file:
 logger.info(f"处理完成，失败的账号密码已被删除。共删除了 {deleted_count} 个账号密码对。")
 
 # print(f"处理完成，失败的账号密码已被删除。共删除了 {deleted_count} 个账号密码对。")
-msg = msg + "\n" + "共删除了 {} 个账号密码对".format(deleted_count)
+msg = msg + "\n\n" + "共删除了 {} 个账号密码对".format(deleted_count)
 # notify.pushplus_bot("签到通知", msg)
 # print(msg)
 def post_weichat_2():
-    url = 'http://www.pushplus.plus/send'
+    token = os.getenv('ANPUSH_TOKEN')
+    if not token:
+        logger.error("ANPUSH_TOKEN is not set.")
+        return
+
+    url = "https://api.anpush.com/push/"+token
+    # 从环境变量中获取token
+    
+   
     # post发送的字典参数
     data_dict = {
-        'token': "6e2a636fa73f4437ab92f48417111e46",  # 一对多、一对一的token值
-        'title': 'Github Actionz-002-签到',  # 微信接收到显示的标题
-        'template': 'txt',  # 指定微信接收到显示的类型
-        'content': msg
+        'title': '签到002',
+        'content': msg,  # 确保变量在此处之前已经被定义
+        "channel": "56466"
     }
-    r = requests.post(url, data=data_dict)  # 发起请求，可以不设置请求头
+    headers = {
+    "Content-Type": "application/x-www-form-urlencoded"
+    }
+    r = requests.post(url, headers=headers, data=data_dict)  # 发起请求
     print(r.text)
     logger.info("推送状态: %s", r.text)
-
 
 if __name__ == '__main__':
     post_weichat_2()
