@@ -121,28 +121,56 @@ logger.info(f"处理完成，失败的账号密码已被删除。共删除了 {d
 msg = msg + "\n\n" + "共删除了 {} 个账号密码对".format(deleted_count)
 # notify.pushplus_bot("签到通知", msg)
 # print(msg)
-def post_weichat_2():
-    token = os.getenv('ANPUSH_TOKEN')
-    if not token:
-        logger.error("ANPUSH_TOKEN is not set.")
-        return
 
-    url = "https://api.anpush.com/push/"+token
-    # 从环境变量中获取token
+# def post_weichat_2():
+#     token = os.getenv('ANPUSH_TOKEN')
+#     if not token:
+#         logger.error("ANPUSH_TOKEN is not set.")
+#         return
+
+#     url = "https://api.anpush.com/push/"+token
+#     # 从环境变量中获取token
     
    
-    # post发送的字典参数
-    data_dict = {
-        'title': '签到002',
-        'content': msg,  # 确保变量在此处之前已经被定义
-        "channel": "56466"
-    }
-    headers = {
-    "Content-Type": "application/x-www-form-urlencoded"
-    }
-    r = requests.post(url, headers=headers, data=data_dict)  # 发起请求
-    print(r.text)
-    logger.info("推送状态: %s", r.text)
+#     # post发送的字典参数
+#     data_dict = {
+#         'title': '签到002',
+#         'content': msg,  # 确保变量在此处之前已经被定义
+#         "channel": "56466"
+#     }
+#     headers = {
+#     "Content-Type": "application/x-www-form-urlencoded"
+#     }
+#     r = requests.post(url, headers=headers, data=data_dict)  # 发起请求
+#     print(r.text)
+#     logger.info("推送状态: %s", r.text)
 
-if __name__ == '__main__':
-    post_weichat_2()
+# if __name__ == '__main__':
+#     post_weichat_2()
+
+def send_webhook(content):
+    token = os.getenv('WEBHOOK')
+    webhook_url = token   # 请在这里填入你的key
+    headers = {'Content-Type': 'application/json'}
+    payload = {
+        "msgtype": "text",
+        "text": {
+            "content": content
+        }
+    }
+
+    try:
+        response = requests.post(webhook_url, json=payload, headers=headers)
+        if response.json().get('errcode') == 0:
+            return response.json()  # 如果请求成功，返回响应数据
+        else:
+            raise Exception(response.json().get('errmsg', '发送失败'))
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+# 使用函数示例
+content = "这里是你想要发送的消息内容"
+result = send_webhook(msg)
+print(result)
+logger.info("推送状态: %s", result)
